@@ -23,6 +23,19 @@ def pre_process(txt):
     txt = " ".join(txt.split())
     return(txt)
 
+def html_build(tok, key, count_by="tag"):
+    df = scoA.tag_ruler(tok=tok, key=key, count_by=count_by)
+    df['ws'] = df['Token'].str.extract(r'(\s+)$')
+    df['Token'] = df['Token'].str.replace(r'(\s+)$', '')
+    df.Token[df['Tag'] != 'Untagged'] = df['Token'].str.replace(r'^(.*?)$', '\\1</span>')
+    df = df.iloc[:,[1,0,4]]
+    df.fillna('', inplace=True)
+    df.Tag[df['Tag'] != 'Untagged'] = df['Tag'].str.replace(r'^(.*?)$', '<span class="\\1">')
+    df.Tag[df['Tag'] == 'Untagged'] = df['Tag'].str.replace('Untagged', '')
+    df['Text'] = df['Tag'] + df['Token'] + df['ws']
+    doc = ''.join(df['Text'].tolist())
+    return(doc)
+
 @enum.unique
 class ViewMode(enum.IntEnum):
     """Enum used to handle which mode and form of analysis is"""
@@ -376,13 +389,39 @@ class Window(QMainWindow):
     def currListDoubleClick(self, item):
         """Used whan an item of the currListW is clicked. Opens to the right if in docViewMode"""
         if self.documentViewAction.isChecked():
+            #run model on click rather than having to press button
             self.docViewFile = item.toolTip()
-            self.inputText.setText(open(item.toolTip(), "r").read())
+            self.runSpacyModel()
+            #reset value
+            self.docViewFile = None
+            #highlight: note that the values tmtoolkit assigns as ids, strips out file extension
+            fname = os.path.splitext(item.text())[0]
+            html_str = html_build(self.tokenDict, fname, self.posMode)
+            self.docID = fname
+            self.doc = html_str
+            #initially set empty style sheet
+            self.inputText.document().setDefaultStyleSheet('')
+            self.inputText.document().setHtml(html_str)
+    #highlight: defined action on clicking on tree
+    def outputTreeDoubleClick(self, index):
+        if self.documentViewAction.isChecked():
+            source_index = self.outputTree.model().mapToSource(index)
+            item = self.outputModel.itemFromIndex(source_index)
+            item = item.data(0)
+            item = item.replace(" ", "")
+            highlight = ' { background-color:yellow; }'
+            style_sheet_str = '.' + item + highlight
+            self.inputText.document().setDefaultStyleSheet(style_sheet_str) # change the stylesheet
+            self.inputText.document().setHtml(self.doc)
     def toggleTextEditor(self):
         """Opens and closes docViewMode"""
         if self.documentViewAction.isChecked():
             self.inputText = QTextEdit()
-            self.inputText.setAcceptRichText(False)
+            #highlight: added properties
+            self.docID = QTextEdit().documentTitle()
+            self.doc = QTextEdit().document()
+            #highlight: changed to rich text
+            #self.inputText.setAcceptRichText(False)
             self.inputText.setReadOnly(True)
             self.visuals.insertWidget(0, self.inputText, 1)
         else:
@@ -551,6 +590,8 @@ class Window(QMainWindow):
         self.outputTree.setSelectionBehavior(self.outputTree.SelectionBehavior.SelectRows)
         self.outputTree.setColumnWidth(0, 200)
         self.outputTree.setUniformRowHeights(True)
+        #highlight: added double click even for tree
+        self.outputTree.doubleClicked.connect(self.outputTreeDoubleClick)
         self.visuals.addWidget(self.outputTree, 1)
         self.workspace.addLayout(self.visuals)
 
