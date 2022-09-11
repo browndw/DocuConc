@@ -795,7 +795,7 @@ class Window(QMainWindow):
         #GUI setup
         super().__init__(parent)
         self.setWindowIcon(QIcon(os.path.join(working_directory , "icon.png")))
-        self.setWindowTitle("Docuconc 1.0")
+        self.setWindowTitle("DocuConc 1.0")
         self.resize(1280, 720)
         centralWidget = QWidget()
         centralWidget.setLayout(self._createMainView())
