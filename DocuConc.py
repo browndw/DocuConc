@@ -588,7 +588,7 @@ class Window(QMainWindow):
         fileMenu.addAction(openAction)
         #saveAction = QAction("&Save", self)
         #saveAction.triggered.connect(self.saveFile)
-        fileMenu.addAction(saveAction)
+        #fileMenu.addAction(saveAction)
         saveAsAction = QAction("&Save Output As", self)
         saveAsAction.triggered.connect(self.saveFileAs)
         fileMenu.addAction(saveAsAction)
