@@ -265,14 +265,17 @@ class Window(QMainWindow):
                 self.openFileW.addItem(listItem)
         self.openFileW.sortItems()
 
-    def toTSV(self, path, seperator):
+    def toTSV(self, path, separator):
         file = open(path, "w+")
         outputString = ""
+        outputHeader = list(self.pd.columns)
+        outputHeader = separator.join(outputHeader)
         for i in range(self.proxyModel.rowCount()):
             for j in range(self.proxyModel.columnCount() - 1):
-                outputString += self.proxyModel.data(self.proxyModel.index(i, j), Qt.ItemDataRole.DisplayRole) + seperator
+                outputString += self.proxyModel.data(self.proxyModel.index(i, j), Qt.ItemDataRole.DisplayRole) + separator
             outputString += self.proxyModel.data(self.proxyModel.index(i, self.proxyModel.columnCount()-1), Qt.ItemDataRole.DisplayRole)
             outputString += "\n"
+        outputString = outputHeader + '\n' + outputString
         file.write(outputString)
         file.close()
     def saveFile(self):
@@ -302,7 +305,7 @@ class Window(QMainWindow):
             msgBox.setDefaultButton(QMessageBox.StandardButton.Ok)
             msgBox.exec()
         else:
-            self.defaultFile = QFileDialog.getSaveFileName(self, 'Save File', filter = "Tab Seperated Values (*.tsv);;Comma Separated Values (*.csv);;JavaScript Object Notation(*.json)")
+            self.defaultFile = QFileDialog.getSaveFileName(self, 'Save File', 'output.tsv', filter = "Tab Seperated Values (*.tsv);;Comma Separated Values (*.csv);;JavaScript Object Notation(*.json)")
             self.saveFile()
     def close(self):
         """Closes selected files. Removes from all lists and fileDicts"""
@@ -583,10 +586,10 @@ class Window(QMainWindow):
         openAction = QAction("&Open Files", self)
         openAction.triggered.connect(self.openFile)
         fileMenu.addAction(openAction)
-        saveAction = QAction("&Save", self)
-        saveAction.triggered.connect(self.saveFile)
+        #saveAction = QAction("&Save", self)
+        #saveAction.triggered.connect(self.saveFile)
         fileMenu.addAction(saveAction)
-        saveAsAction = QAction("&Save as", self)
+        saveAsAction = QAction("&Save Output As", self)
         saveAsAction.triggered.connect(self.saveFileAs)
         fileMenu.addAction(saveAsAction)
         fileMenu.addSeparator()
