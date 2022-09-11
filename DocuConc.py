@@ -484,6 +484,7 @@ class Window(QMainWindow):
             self.pd.Range = self.pd.Range.map('{:.2f}'.format)
         elif vMode == ViewMode.tagsDTM:
             self.pd = scoA.tags_dtm(self.tokenDict, self.posMode)
+            self.pd[self.pd.columns[1:]] = self.pd[self.pd.columns[1:]].applymap('{:.0f}'.format)
         elif vMode == ViewMode.NGramTable:
             span = int(self.ng_span.text())
             if span < 2:
