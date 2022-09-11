@@ -475,16 +475,12 @@ class Window(QMainWindow):
         if   vMode == ViewMode.freqTable:
             self.pd = scoA.frequency_table(self.tokenDict, self.non_punct, self.posMode)
             # added number formatting
-            self.pd.RF = self.pd.RF.round(3)
             self.pd.RF = self.pd.RF.map('{:.3f}'.format)
-            self.pd.Range = self.pd.Range.round(2)
             self.pd.Range = self.pd.Range.map('{:.2f}'.format)
         elif vMode == ViewMode.tagsTable:
             self.pd = scoA.tags_table(self.tokenDict, self.non_punct, self.posMode)
             # added number formatting
-            self.pd.RF = self.pd.RF.round(3)
             self.pd.RF = self.pd.RF.map('{:.3f}'.format)
-            self.pd.Range = self.pd.Range.round(2)
             self.pd.Range = self.pd.Range.map('{:.2f}'.format)
         elif vMode == ViewMode.tagsDTM:
             self.pd = scoA.tags_dtm(self.tokenDict, self.posMode)
@@ -509,9 +505,7 @@ class Window(QMainWindow):
                 span = 5
                 self.ng_span.setText(str(span))
             self.pd = scoA.ngrams_table(self.tokenDict, span, self.non_punct, self.posMode)
-            self.pd.RF = self.pd.RF.round(3)
             self.pd.RF = self.pd.RF.map('{:.3f}'.format)
-            self.pd.Range = self.pd.Range.round(2)
             self.pd.Range = self.pd.Range.map('{:.2f}'.format)
         elif vMode == ViewMode.collacTable:
             self.pd = scoA.coll_table(self.tokenDict, self.keyword.text(), int(self.lSpan.text()), int(self.rSpan.text()), self.collStat.checkedAction().text(), self.posMode)
@@ -534,20 +528,14 @@ class Window(QMainWindow):
                 extraDict = scoA.convert_corpus(extraCorp)
                 refCounts = scoA.frequency_table(extraDict, self.non_punct, self.posMode)
                 self.pd = scoA.keyness_table(targetCounts, refCounts)
-                self.pd.LL = self.pd.LL.round(3)
                 self.pd.LL = self.pd.LL.map('{:.3f}'.format)
-                self.pd.LR = self.pd.LR.round(3)
                 self.pd.LR = self.pd.LR.map('{:.3f}'.format)
                 self.pd.PV = self.pd.PV.map('{:.5f}'.format)
                 self.pd.AF = self.pd.AF.map('{:.0f}'.format)
-                self.pd.RF = self.pd.RF.round(3)
                 self.pd.RF = self.pd.RF.map('{:.3f}'.format)
-                self.pd.Range = self.pd.Range.round(2)
                 self.pd.Range = self.pd.Range.map('{:.2f}'.format)
                 self.pd['AF Ref'] = self.pd['AF Ref'].map('{:.0f}'.format)
-                self.pd['RF Ref'] = self.pd['RF Ref'].round(3)
                 self.pd['RF Ref'] = self.pd['RF Ref'].map('{:.3f}'.format)
-                self.pd['Range Ref'] = self.pd['Range Ref'].round(2)
                 self.pd['Range Ref'] = self.pd['Range Ref'].map('{:.2f}'.format)
         else:
             raise Exception("Unknown format. Should be impossible")
