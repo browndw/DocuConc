@@ -103,7 +103,7 @@ class Window(QMainWindow):
         """Opens the keyword input and ranges"""
         keywordBar = QHBoxLayout()
         self.keyword = QLineEdit()
-        keywordBar.addWidget(QLabel("Keyword:"))
+        keywordBar.addWidget(QLabel("Node word:"))
         keywordBar.addWidget(self.keyword)
         keywordBar.addWidget(QLabel("Case sensitive: "))
         self.keywordIgnoreCase = ModeSwitch("Case Sensitive", "Ignore Case", 100)
@@ -145,7 +145,7 @@ class Window(QMainWindow):
         def changeText (action):
             self.collButton.setText(action.text())
         self.collButton.triggered.connect(changeText)
-        keywordBar.addWidget(QLabel("Keyword:"))
+        keywordBar.addWidget(QLabel("Node word:"))
         keywordBar.addWidget(self.keyword, 4)
         keywordBar.addWidget(QLabel("Left span:"))
         keywordBar.addWidget(self.lSpan, 1)
